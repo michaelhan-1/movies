@@ -63,8 +63,7 @@ const create = async (req, res) => {
 
     //create movie
     const newMovie = await Movie.create(movie);
-    console.log(req.body.cast.split(","));
-    await newMovie.setActors(req.body.cast.split(",").map(ele=>Number(ele)));
+    await newMovie.setActors(req.body.cast.length?req.body.cast.split(",").map(ele=>Number(ele)):[]);
     res.send(newMovie);
   } catch (err) {
     res.status(500).send({
@@ -93,10 +92,13 @@ const update = async (req, res) => {
     console.log(movie);
     const updated = await Movie.update(movie, { where: { id: req.params.id } });
     const updatedMovie = await Movie.findByPk(req.params.id);
-    console.log(req.body.cast.split(","));
-    await updatedMovie.setActors(
-      req.body.cast.split(",").map((ele) => Number(ele))
-    );
+    const result=await updatedMovie.setActors(req.body.cast.length?req.body.cast.split(",").map(ele=>Number(ele)):[]);
+    if(updated!=1&&result.length==0){
+        res.status(400).send({
+            message:"nothing changed!"
+        })
+        return;
+    }
     res.send({
       message: "updated successfully.",
     });
