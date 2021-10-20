@@ -10,10 +10,10 @@ function NavBar(props) {
         <div>
             <Nav fill variant="tabs" defaultActiveKey="/home">
                 <Nav.Item>
-                    <Nav.Link href="/">Active</Nav.Link>
+                    <Nav.Link href="/">All Movies</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link onClick={()=>{newMovie()}}>New Moive</Nav.Link>
+                    <Nav.Link onClick={newMovie}>New Moive</Nav.Link>
                 </Nav.Item>
 
             </Nav>
