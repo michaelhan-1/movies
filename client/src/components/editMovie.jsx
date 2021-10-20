@@ -58,6 +58,7 @@ function EditForm(props) {
     formData.append("year_of_release", year_of_release);
     formData.append("plot", plot);
     formData.append("poster", file);
+    formData.append("cast", selected.map(ele=>ele.value));
     console.log(formData);
     const config = {
       headers: {

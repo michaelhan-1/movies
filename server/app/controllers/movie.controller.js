@@ -4,12 +4,14 @@ const Movie = db.movie;
 const Actor = db.actor;
 const findById = async (req, res) => {
   try {
-    const movie = await Movie.findByPk(req.params.id,{include: {
+    const movie = await Movie.findByPk(req.params.id, {
+      include: {
         model: Actor,
         as: "actors",
         attributes: ["id", "name"],
         through: { attributes: [] },
-      },});
+      },
+    });
     res.send(movie);
   } catch (error) {
     res.status(500).send({
@@ -61,6 +63,8 @@ const create = async (req, res) => {
 
     //create movie
     const newMovie = await Movie.create(movie);
+    console.log(req.body.cast.split(","));
+    await newMovie.setActors(req.body.cast.split(",").map(ele=>Number(ele)));
     res.send(newMovie);
   } catch (err) {
     res.status(500).send({
@@ -82,22 +86,20 @@ const update = async (req, res) => {
       year_of_release: req.body.year_of_release,
       plot: req.body.plot,
     };
-    if(req.file){
-        movie.poster=req.file.originalname;
+    if (req.file) {
+      movie.poster = req.file.originalname;
     }
     //check if the movie exists
     console.log(movie);
     const updated = await Movie.update(movie, { where: { id: req.params.id } });
-    if (updated == 1) {
-      res.send({
-        message: "updated successfully.",
-      });
-    } else {
-      res.status(404).send({
-        message: `Nothing Changed.`,
-      });
-      return;
-    }
+    const updatedMovie = await Movie.findByPk(req.params.id);
+    console.log(req.body.cast.split(","));
+    await updatedMovie.setActors(
+      req.body.cast.split(",").map((ele) => Number(ele))
+    );
+    res.send({
+      message: "updated successfully.",
+    });
   } catch (err) {
     res.status(500).send({
       message: err.message || "Some error occured when updating movie",
@@ -125,5 +127,5 @@ module.exports = {
   findAll,
   create,
   update,
-  deleteById
+  deleteById,
 };
